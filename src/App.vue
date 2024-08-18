@@ -47,7 +47,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <p>Screen Refresh Rate: {{ refreshRate }}</p>
+  <div
+    class="flex items-center justify-center min-h-screen bg-[#253238] text-white relative"
+  >
+    <h1 class="text-2xl font-bold">Screen Refresh Rate: {{ refreshRate }}</h1>
+    <div class="absolute w-full bottom-5 text-center text-gray-300">
+      Developed by Usman
+    </div>
   </div>
 </template>
