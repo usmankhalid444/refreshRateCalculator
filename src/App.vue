@@ -85,7 +85,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="flex items-center justify-center min-h-[85vh] bg-[#253238] text-white relative"
+    class="flex items-center justify-center min-h-screen bg-[#253238] text-white relative"
   >
     <canvas ref="canvasRef" class="absolute inset-0 w-full h-full" />
     <h1 class="text-2xl font-bold relative z-10">
