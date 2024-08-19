@@ -5,8 +5,12 @@ import WebGLFluid from "webgl-fluid";
 // Refresh rate calculation
 const refreshRate = ref("Calculating...");
 const screenResolution = ref("");
+const screenSizeInches = ref("");
 const sampleCount = 100; // Number of samples to collect before determining the result
 let refreshRateSamples = [];
+
+// Estimated PPI for a typical screen; adjust this value for accuracy if known
+const PPI = 96;
 
 const calculateRefreshRate = () => {
   let lastTimestamp = 0;
@@ -46,13 +50,22 @@ const calculateRefreshRate = () => {
 
 // Determine screen resolution and categorize it dynamically
 const calculateScreenResolution = () => {
-  const width = window.screen.width * window.devicePixelRatio;
-  const height = window.screen.height * window.devicePixelRatio;
+  const width = window.screen.width;
+  const height = window.screen.height;
+  const devicePixelRatio = window.devicePixelRatio;
 
   // Calculate the resolution label in "K" format
-  const widthK = (width / 1000).toFixed(1); // Calculate K value by dividing by 1000
+  const widthK = ((width * devicePixelRatio) / 1000).toFixed(1); // Calculate K value by dividing by 1000
 
-  screenResolution.value = `${widthK}K (${width} x ${height})`;
+  screenResolution.value = `${widthK}K (${width * devicePixelRatio} x ${
+    height * devicePixelRatio
+  })`;
+
+  // Calculate screen size in inches using the diagonal pixel resolution
+  const diagonalPixels = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+  const diagonalInches = (diagonalPixels / PPI).toFixed(1); // Using the estimated PPI
+
+  screenSizeInches.value = `${diagonalInches}"`;
 };
 
 // WebGL fluid simulation
@@ -104,6 +117,7 @@ onMounted(() => {
     <div class="relative z-10 text-center">
       <h1 class="text-2xl font-bold">Screen Refresh Rate: {{ refreshRate }}</h1>
       <p class="mt-2">Screen Resolution: {{ screenResolution }}</p>
+      <p class="mt-2">Screen Size: {{ screenSizeInches }} inches</p>
     </div>
     <div class="absolute w-full bottom-5 text-center text-gray-300">
       Developed by Usman
