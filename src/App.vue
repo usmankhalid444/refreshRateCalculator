@@ -4,6 +4,7 @@ import WebGLFluid from "webgl-fluid";
 
 // Refresh rate calculation
 const refreshRate = ref("Calculating...");
+const screenResolution = ref("");
 const sampleCount = 100; // Number of samples to collect before determining the result
 let refreshRateSamples = [];
 
@@ -43,11 +44,23 @@ const calculateRefreshRate = () => {
   requestAnimationFrame(step);
 };
 
+// Determine screen resolution and categorize it dynamically
+const calculateScreenResolution = () => {
+  const width = window.screen.width * window.devicePixelRatio;
+  const height = window.screen.height * window.devicePixelRatio;
+
+  // Calculate the resolution label in "K" format
+  const widthK = (width / 1000).toFixed(1); // Calculate K value by dividing by 1000
+
+  screenResolution.value = `${widthK}K (${width} x ${height})`;
+};
+
 // WebGL fluid simulation
 const canvasRef = ref(null);
 
 onMounted(() => {
   calculateRefreshRate();
+  calculateScreenResolution();
 
   const options = {
     IMMEDIATE: true,
@@ -88,9 +101,10 @@ onMounted(() => {
     class="flex items-center justify-center min-h-screen bg-[#253238] text-white relative"
   >
     <canvas ref="canvasRef" class="absolute inset-0 w-full h-full" />
-    <h1 class="text-2xl font-bold relative z-10">
-      Screen Refresh Rate: {{ refreshRate }}
-    </h1>
+    <div class="relative z-10 text-center">
+      <h1 class="text-2xl font-bold">Screen Refresh Rate: {{ refreshRate }}</h1>
+      <p class="mt-2">Screen Resolution: {{ screenResolution }}</p>
+    </div>
     <div class="absolute w-full bottom-5 text-center text-gray-300">
       Developed by Usman
     </div>
