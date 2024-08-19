@@ -9,9 +9,6 @@ const screenSizeInches = ref("");
 const sampleCount = 100; // Number of samples to collect before determining the result
 let refreshRateSamples = [];
 
-// Estimated PPI for a typical screen; adjust this value for accuracy if known
-const PPI = 96;
-
 const calculateRefreshRate = () => {
   let lastTimestamp = 0;
 
@@ -61,11 +58,41 @@ const calculateScreenResolution = () => {
     height * devicePixelRatio
   })`;
 
-  // Calculate screen size in inches using the diagonal pixel resolution
+  // Calculate the diagonal resolution in pixels
   const diagonalPixels = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-  const diagonalInches = (diagonalPixels / PPI).toFixed(1); // Using the estimated PPI
+
+  // Assume a standard PPI if none is available (fallback mechanism)
+  const standardPPI = 96;
+  const estimatedPPI = diagonalPixels / standardScreenDiagonal(); // Function to estimate screen diagonal
+
+  // Calculate the screen size in inches
+  const diagonalInches = (
+    diagonalPixels / (estimatedPPI || standardPPI)
+  ).toFixed(1);
 
   screenSizeInches.value = `${diagonalInches}"`;
+};
+
+// Estimate standard screen diagonal based on a formula or common values
+const standardScreenDiagonal = () => {
+  // Check for common devices or fallback to a standard estimate
+  const diagonals = {
+    mobile: 5.5,
+    tablet: 10,
+    laptop: 15.6,
+    desktop: 24,
+  };
+
+  // Try to infer the device type based on the screen resolution
+  const width = window.screen.width;
+  const height = window.screen.height;
+
+  // Use device type estimation to select a standard diagonal
+  if (width < 768 && height < 1024) return diagonals.mobile; // Likely mobile
+  if (width < 1024 && height < 1366) return diagonals.tablet; // Likely tablet
+  if (width < 1920 && height < 1080) return diagonals.laptop; // Likely laptop
+
+  return diagonals.desktop; // Default to desktop
 };
 
 // WebGL fluid simulation
