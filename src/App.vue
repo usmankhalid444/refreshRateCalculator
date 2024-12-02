@@ -98,6 +98,11 @@ const standardScreenDiagonal = () => {
 // WebGL fluid simulation
 const canvasRef = ref(null);
 
+const triggerFluidAnimation = () => {
+  const event = new KeyboardEvent("keydown", { key: " " });
+  window.dispatchEvent(event);
+};
+
 onMounted(() => {
   calculateRefreshRate();
   calculateScreenResolution();
@@ -133,6 +138,8 @@ onMounted(() => {
   };
 
   WebGLFluid(canvasRef.value, options);
+
+  window.addEventListener("click", triggerFluidAnimation);
 });
 </script>
 
